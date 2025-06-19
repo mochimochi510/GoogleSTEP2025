@@ -84,10 +84,10 @@ class Wikipedia:
         # bfs
         queue = deque()
         visited = {}
-        parent = {} # 通った経路の親ノードを保存する辞書
+        parent = {} # 通った経路の親ノードを保存するset
         start_id = self.get_id_from_title(start)
         queue.append(start_id)
-        visited[start_id] = True
+        visited.add(start_id)
         parent[start_id] = None
         
         while queue:
@@ -105,7 +105,7 @@ class Wikipedia:
                 return path
             for child in self.links[node_id]:
                 if not (child in visited):
-                    visited[child] = True
+                    visited.add(child)
                     parent[child] = node_id
                     queue.append(child)
         print("not found")
@@ -132,7 +132,7 @@ class Wikipedia:
                     new_pageranks = [new_pageranks[x]+ old_pageranks[i]/len(self.titles) for x in new_pageranks]
                 else:
                     for j in self.links[page_id]:
-                        new_pageranks[j] = [new_pageranks[x] + 0.85*old_pageranks[page_id]/len(self.links[page_id]) for x in new_pageranks]
+                        new_pageranks[j] = new_pageranks[j] + 0.85*old_pageranks[page_id]/len(self.links[page_id])
                     for j in list(set(list(self.titles.keys())) - set(self.links[page_id])):
                         new_pageranks[j] = 0.15*old_pageranks[page_id]/len(self.titles)
         return new_pageranks
